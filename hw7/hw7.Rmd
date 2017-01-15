@@ -1,0 +1,297 @@
+---
+title: "hw7"
+author: Hui Sophie Wang
+output: html_document
+---
+
+# 9.10
+## (a)
+
+```{r}
+scores <- read.table("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/5th/KutnerData/Chapter%20%209%20Data%20Sets/CH09PR10.txt", col.names=c("Y", "X1", "X2", "X3", "X4"))
+Y <- scores$Y
+X1 <- scores$X1
+X2 <- scores$X2
+X3 <- scores$X3
+X4 <- scores$X4
+boxplot(X1, main="X1")
+boxplot(X2, main="X2")
+boxplot(X3, main="X3")
+boxplot(X4, main="X4")
+```
+
+There's an outlier in X1.
+
+X2 is skewed left.
+
+## (b)
+```{r}
+pairs(scores)
+cor(scores)
+```
+
+From the scatter plot matrix and the correlation matrix, we can see that Y has positive correlation with X3 and X4. There is serious multicollinearity problem, X3 and X4 are strongly correlated with each other. 
+
+## (c)
+```{r}
+fit_all <- lm(Y ~ X1 + X2 + X3 + X4)
+summary(fit_all)
+```
+
+The t test statistic for the coefficient of X2 is too small (its p-value is too large), it may need to be removed from the model.
+
+# 9.11
+## (a)
+
+```{r}
+anova(lm(Y~X1))
+anova(lm(Y~X2))
+anova(lm(Y~X3))
+anova(lm(Y~X4))
+anova(lm(Y~X1+X2))
+anova(lm(Y~X1+X3))
+anova(lm(Y~X1+X4))
+anova(lm(Y~X2+X3))
+anova(lm(Y~X2+X4))
+anova(lm(Y~X3+X4))
+anova(lm(Y~X1+X2+X3))
+anova(lm(Y~X1+X2+X4))
+anova(lm(Y~X1+X3+X4))
+anova(lm(Y~X2+X3+X4))
+anova(fit_all)
+```
+SSTO=9054
+
+n=25
+
+SSTO/(n-1)=377.25
+
+X1: $R_{a,2}^2=1-289.48/377.25=0.2327$
+
+X2: $R_{a,2}^2=1-296.41/377.25=0.2143$
+
+X3: $R_{a,2}^2=1-76.9/377.25=0.7962$
+
+X4: $R_{a,2}^2=1-96.1/377.25=0.7453$
+
+X1,X2: $R_{a,3}^2=1-220.51/377.25=0.4155$
+
+X1,X3: $R_{a,3}^2=1-27.6/377.25=0.9268$
+
+X1,X4: $R_{a,3}^2=1-76/377.25=0.7985$
+
+X2,X3: $R_{a,3}^2=1-79.8/377.25=0.7885$
+
+X2,X4: $R_{a,3}^2=1-89.2/377.25=0.7636$
+
+X3,X4: $R_{a,3}^2=1-50.5/377.25=0.8661$
+
+X1,X2,X3: $R_{a,4}^2=1-28.4/377.25=0.9247$
+
+X1,X2,X4: $R_{a,4}^2=1-66.7/377.25=0.8232$
+
+X1,X3,X4: $R_{a,4}^2=1-16.6/377.25=0.9560$
+
+X2,X3,X4: $R_{a,4}^2=1-52.2/377.25=0.8616$
+
+X1,X2,X3,X4: $R_{a,5}^2=1-16.8/377.25=0.9555$
+
+The four best subset regression models are:
+{X1,X3,X4}
+{X1,X2,X3,X4}
+{X1,X3}
+{X1,X2,X3}
+
+## (b)
+I would consider other criterias such as $C_p$, $PRESS_p$, $AIC_p$
+
+# 9.18
+## (a)
+
+$\alpha_{enter}=0.05$
+
+$\alpha_{remove}=0.1$
+
+Forward Stepwise Regression:
+
+Step 1: 
+```{r}
+summary(lm(Y~X1))
+summary(lm(Y~X2))
+summary(lm(Y~X3))
+summary(lm(Y~X4))
+```
+
+The X variable with the largest $t^*$ value is X3, its p-value is less than $\alpha_{enter}$, so X3 is added to the model.
+
+Step 2:
+```{r}
+summary(lm(Y~X3+X1))
+summary(lm(Y~X3+X2))
+summary(lm(Y~X3+X4))
+```
+
+Considering two X variables, where X3 is one of the pair, (X3,X1) has the largest $t^*$ value, and its p-value is less than $\alpha_{enter}$, so X1 is added to the model. We don't need to test whether X3 is needed to be dropped, because in step 1 we already covered this case.
+
+Step 3:
+```{r}
+summary(lm(Y~X3+X1+X2))
+summary(lm(Y~X3+X1+X4))
+summary(lm(Y~X1))
+```
+
+Considering three X Variables, where X3 and X1 are two of them, (X3,X1,X4) has the largest $t^*$ value, and its p-value is less than $\alpha_{enter}$, so X4 is added to the model. We need to test whether X3 and X1 should be dropped out of the model, X1 has the smallest $t^*$, but its p-value is still less than $\alpha_{remove}$, so it should be kept.
+
+Step 4:
+```{r}
+summary(lm(Y~X3+X1+X4+X2))
+```
+We consider all the four X variables at this step. When the last variable X2 is added, its p-value is larger than $\alpha_{enter}$, so it should not be added.
+
+The best subset found is {X1,X3,X4}
+
+## (b)
+The best subset found by forward stepwise regression is also the best subset found by $R_{a,p}^2$
+
+# 9.21
+
+```{r}
+# method 1: (fit the model n times)
+n <- length(Y)
+X <- cbind(X1, X3, X4)
+total <- 0
+for(i in 1:n){
+  fit <- lm(Y[-i]~X[-i,])
+  d <- Y[i] - (X[i,] %*% fit$coefficients[2:4] + fit$coefficients[1])
+  total <- total + d^2
+}
+total
+
+# method 2: (fit the model 1 time, and use equation 10.21a)
+X <- cbind(1, X1, X3, X4)
+H <- X %*% solve(t(X)%*%X) %*% t(X)
+e <- (diag(n)-H) %*% Y
+d <- e / (1-diag(H))
+sum(d^2)
+
+fit_best <- lm(Y~X1+X3+X4)
+summary(fit_best)
+anova(fit_best)
+```
+PRESS=471.45, SSE=348.2, SSE is smaller than PRESS, but is close to it, which means SSE is a reasonably valid indicator of the predicative ability of the fitted model.
+
+# 9.22
+## (a)
+```{r}
+vali <- read.table("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/5th/KutnerData/Chapter%20%209%20Data%20Sets/CH09PR22.txt", col.names=c("Y", "X1", "X2", "X3", "X4"))
+
+cor(vali)
+```
+
+The correlatioin matrix of the validation data set is reasonably close to that of the model-building data set.
+
+## (b)
+
+```{r}
+Y_vali <- vali$Y
+X1_vali <- vali$X1
+X2_vali <- vali$X2
+X3_vali <- vali$X3
+X4_vali <- vali$X4
+fit_vali <- lm(Y_vali~X1_vali+X3_vali+X4_vali)
+summary(fit_vali)
+anova(fit_vali)
+```
+      training set   validation set
+---   ------------  -------------
+b0      -124.2      -122.77 
+s{b0}   9.874       11.848
+b1      0.296       0.312
+s{b1}   0.044       0.047
+b3      1.357       1.407
+s{b3}   0.152       0.233
+b4      0.517       0.428
+s{b4}   0.131       0.197
+MSE     16.6        18.4
+$R^2$   0.9616      0.9489
+
+The estimates for the validation data set appear to be resonably similar to those obtained for the training set.
+
+## (c)
+```{r}
+X_vali <- cbind(1, X1_vali, X3_vali, X4_vali)
+b_train <- fit_best$coefficients
+Y_hat <- X_vali %*% b_train
+n_vali <- length(Y_vali)
+sum((Y_vali-Y_hat)^2)/n_vali
+```
+
+MSPR = 15.71, MSE obtained from training set is 16.6, there isn't evidence of a substantial bias problem in MSE here. It is consistent with the finding in Problem 9.21 that MSE is a reasonably valid indicator of the predictability of the model.
+
+## (d)
+```{r}
+Y <- append(Y, Y_vali)
+X1 <- append(X1, X1_vali)
+X2 <- append(X2, X2_vali)
+X3 <- append(X3, X3_vali)
+X4 <- append(X4, X4_vali)
+fit <- lm(Y~X1+X3+X4)
+summary(fit)
+```
+
+The estimated standard deviations of the coefficients of the combined data are reduced from those obtained for the training data.
+
+# 14.2
+No, it can't be used as in linear regression. Because it violates the assumptions of linear regression. Y is not normally distributed, and its variance is not constant.
+
+
+# 14.14
+
+## (a)
+```{r}
+data <- read.table("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/5th/KutnerData/Chapter%2014%20Data%20Sets/CH14PR14.txt", col.names=c("Y", "X1", "X2", "X3"))
+Y <- data$Y
+X1 <- data$X1
+X2 <- data$X2
+X3 <- data$X3
+logit <- glm(Y~X1+X2+X3, family=binomial)
+summary(logit)
+```
+
+b0 = -1.177
+
+b1 = 0.073
+
+b2 = -0.099
+
+b3 = 0.434
+
+$Y_i\sim{Bernoulli(\pi_i)}$ where $\hat{\pi_i}=\frac{exp(-1.177+0.073X_1-0.099X_2+0.434X_3)}{1+exp(-1.177+0.073X_1-0.099X_2+0.434X_3)}$
+
+## (b)
+```{r}
+exp(coef(logit))
+```
+
+exp(b1) = 1.076
+
+Interpretation: The odds of receiving the flu shot increases by 7.6 percent when age increases by 1 year, while health awareness and gender are hold constant. 
+
+exp(b2) = 0.906
+
+Interpretation: The odds of receiving the flu shot decreases by 9.4 percent when health awareness increases by 1 unit, while age and gender are hold constant. 
+
+exp(b3) = 1.543
+
+Interpretation: The odds of receiving the flu shot increases by 54.3 percent when the gender is male instead of female, while age and health awareness are hold constant. 
+
+
+## (c)
+```{r}
+pi_prime <- sum(coef(logit)*c(1,55,60,1))
+pi <- exp(pi_prime)/(1+exp(pi_prime))
+pi
+```
+
+When X1=55, X2=60, X3=1, the estimated probability $\hat{\pi_i}=0.064$
+

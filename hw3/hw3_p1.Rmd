@@ -1,0 +1,66 @@
+---
+title: "hw3"
+output: pdf_document
+---
+
+1.
+(a)
+Null hypothesis: There's no difference between Caffeine group and Sleep group in average recall ability.
+Alternative hypothsis: There is difference between Caffeine group and Sleep group in average recall ability.
+
+test statistics $T=\frac{\overline{y1}-\overline{y2}}{SE_{y1-y2}}$
+Since we assume equal population variance, 
+$SE_{y1-y2}=\sqrt{\frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{n_1+n_2-2}}=\sqrt{\frac{(15-1)3.3^2+(12-1)3.6^2}{15+12-2}}=3.435$, $T=\frac{15.25-12.25}{3.435}=0.873$
+
+$SE_1^2=s_1^2/n_1=3.3^2/15=0.726$
+$SE_2^2=s_2^2/n_2=3.6^2/12=1.08$
+degree of freedom $df=\frac{(SE_1^2+SE_2^2)^2}{SE_1^4/(n_1-1)+SE_2^4/(n_2-1)}\approx{23}$
+
+At 95% confidence level, $t_{23}^{0.975}=2.069$, since $T=0.873<2.069$, We fail to reject the null hypothesis.
+We are not justified in concluding that caffeine group and sleep group have different average recall ability.
+
+(b)
+If we assume different population variance,
+$SE_{y1-y2}=\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}=1.344$
+$T=\frac{\overline{y1}-\overline{y2}}{SE_{y1-y2}}=2.23$
+degree of freedom $df=n_1+n_2-2=25$
+At 95% confidence level, $t_{25}^{0.975}=2.060$, since $T=2.23>2.060$, we reject the null hypothesis, and accept the alternative hypothesis.
+
+(c)
+i) $T=\frac{\overline{y}-\mu_1}{s/\sqrt{n}} \sim {Student_{n-1}}$
+
+$P(-t_{n-1}^{1-\alpha/2}\times{s/\sqrt{n}}\le{\overline{y}}\le{t_{n-1}^{1-\alpha/2}\times{s/\sqrt{n}}})=1-\alpha$
+
+$\alpha=0.05$, 
+
+For sleep group $t_{n-1}^{1-\alpha/2}=t_{14}^{0.975}=2.145$
+
+$CI_1=[15.25\pm{2.145\times{3.3/\sqrt{15}}}]=[15.25\pm{1.83}]=[13.42, 17.08]$
+
+
+For caffeine group $t_{n-1}^{1-\alpha/2}=t_{11}^{0.975}=2.201$
+
+$CI_2=[15.25\pm{2.201\times{3.6/\sqrt{12}}}]=[12.25\pm{2.29}]=[9.96, 14.54]$
+
+Interpretation: The probability that the average recall ability of sleep group lies in the range [13.42, 17.08] is 95%.
+The probability that the average recall ability of group caffeine lies in the range [9.96, 14.54] is 95%.
+The confience intervals of the two groups are not completely separate, they overlap a little.
+
+ii)
+Confidence interval is an estimate of the range of the average recall ability of each group, it's not a point estimate or a percentage estimate, 95 % confidence inerval means the probability that the average recall ability of the group within the interval range is 95%.
+
+iii)
+$T=\frac{\overline{y_1}-\overline{y_2}-\delta}{SE_{y1-y2}} \sim {Student_{n_1+n_2-2}}$
+$SE_{y1-y2}=\sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}}=1.344$
+
+$t_{n_1+n_2-2}^{1-\alpha/2}=t_{25}^{0.975}=2.060$
+$P(-t_{n_1+n_2-2}^{1-\alpha/2}\times{SE_{y1-y2}}\le{\overline{y_1}-\overline{y_2}-\delta}\le{t_{n_1+n_2-2}^{1-\alpha/2}\times{SE_{y1-y2}}})=1-\alpha$
+$\alpha=0.05$,
+$-2.060\times{1.344}\le{15.25-12.25-\delta}\le{2.060\times{1.344}}$
+
+$\delta\in{[0.23, 5.77]}$
+
+(d)
+When using the hypothesis testing approach, we either reject a hypothesis or fail to reject a hypothesis based on alpha, which is a predefined hard limit. But confidence interval provides a range estimate of the mean, and it contains more information.
+
+

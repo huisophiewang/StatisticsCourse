@@ -1,0 +1,86 @@
+============================
+raw_edit_dist
+
+Call:
+lm(formula = extroversion ~ feature, data = extra_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.12001 -0.43200 -0.04471  0.36513  1.43408 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)   
+(Intercept)  1.75697    0.46714   3.761  0.00108 **
+feature      0.20994    0.08589   2.444  0.02300 * 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.6684 on 22 degrees of freedom
+Multiple R-squared:  0.2136,	Adjusted R-squared:  0.1778 
+F-statistic: 5.974 on 1 and 22 DF,  p-value: 0.023
+
+
+
+==========================
+raw_len_diff
+
+Call:
+lm(formula = extroversion ~ feature, data = extra_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.9801 -0.3352 -0.0542  0.4249  1.1773 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)   
+(Intercept)   1.3635     0.4255   3.204  0.00409 **
+feature       0.5012     0.1376   3.643  0.00144 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.5953 on 22 degrees of freedom
+Multiple R-squared:  0.3762,	Adjusted R-squared:  0.3479 
+F-statistic: 13.27 on 1 and 22 DF,  p-value: 0.001436
+
+
+=====================
+raw_end_time_var
+
+Call:
+lm(formula = extroversion ~ feature, data = extra_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.11751 -0.40300 -0.07709  0.32158  2.02910 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 2.356e+00  2.658e-01   8.864 1.03e-08 ***
+feature     1.169e-08  5.368e-09   2.177   0.0405 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.6837 on 22 degrees of freedom
+Multiple R-squared:  0.1773,	Adjusted R-squared:  0.1399 
+F-statistic: 4.741 on 1 and 22 DF,  p-value: 0.04046
+
+======================
+raw_start_time_var
+
+Call:
+lm(formula = extroversion ~ feature, data = extra_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.0381 -0.5686 -0.1578  0.3703  1.8243 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 2.613e+00  2.615e-01   9.991 1.23e-09 ***
+feature     3.044e-09  2.761e-09   1.102    0.282    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.7338 on 22 degrees of freedom
+Multiple R-squared:  0.05233,	Adjusted R-squared:  0.009253 
+F-statistic: 1.215 on 1 and 22 DF,  p-value: 0.2823
