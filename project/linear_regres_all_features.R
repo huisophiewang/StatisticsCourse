@@ -5,6 +5,7 @@ X <- read.csv("C:/Users/Sophie/workspace/Personality/result/feature/all_features
 #cor(X[,19:23], use="complete.obs")
 #cor(X[,19:26], use="complete.obs")
 cor(X[,14:18])
+boxplot(X$extra, main="extroversion")
 
 
 

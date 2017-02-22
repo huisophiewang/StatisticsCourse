@@ -1,8 +1,46 @@
 #X <- read.csv("C:/Users/Sophie/workspace/Personality/result/feature/all_features.csv", header=TRUE)
-X <- read.csv("C:/Users/Sophie/workspace/Personality/result/feature/combined_all_extra.csv", header=TRUE)
-#########################################
+#X <- read.csv("C:/Users/Sophie/workspace/Personality/result/feature/combined_all_extra.csv", header=TRUE)
+X <- read.csv("C:/Users/Sophie/workspace/Personality/result/feature/all_features_extra.csv", header=TRUE)
+############
+hist(X$extra)
+boxplot(X$extra, main="extroversion")
+cor(X[,2], X$extra)
+cor(X[,3], X$extra)
+cor(X[,4], X$extra)
+cor(X[,5], X$extra)
+summary(X$extra)
+
+skewness(X$extra)
+
+#####
 # extra
 Y <- X[,ncol(X)]
+index <- c(2:5)
+for(i in index){
+  m1 <- lm(Y ~ X[,i])
+  print(colnames(X)[i])
+  print(summary(m1))
+}
+# add end_time_var
+
+index <- c(2,4,5)
+for(i in index){
+  m1 <- lm(Y ~ X[,3] + X[,i])
+  print(colnames(X)[i])
+  print(summary(m1))
+}
+# add num_days_activity
+
+index <- c(2,5)
+for(i in index){
+  m1 <- lm(Y ~ X[,3] + X[,4] + X[,i])
+  print(colnames(X)[i])
+  print(summary(m1))
+}
+# add bluetooth daytime
+
+#####################################################
+# old data
 
 index <- c(1:14)
 for(i in index){
