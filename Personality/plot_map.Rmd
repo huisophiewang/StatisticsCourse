@@ -1,0 +1,8 @@
+---
+title: "plot_map"
+output: html_document
+---
+
+![](test.png)
+
+

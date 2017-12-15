@@ -1,0 +1,20 @@
+=====================
+raw_start_time_var
+
+Call:
+lm(formula = extroversion ~ feature, data = extra_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.37490 -0.30702  0.04328  0.52566  1.08382 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  4.078e+00  2.576e-01  15.830 1.65e-13 ***
+feature     -6.252e-09  2.693e-09  -2.321   0.0299 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.7228 on 22 degrees of freedom
+Multiple R-squared:  0.1967,	Adjusted R-squared:  0.1602 
+F-statistic: 5.388 on 1 and 22 DF,  p-value: 0.02993

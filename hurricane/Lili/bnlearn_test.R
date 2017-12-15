@@ -1,129 +1,64 @@
 library(bnlearn)
-head(learning.test)
-# iamb algorithm
-plot(inter.iamb(learning.test))
-# gs algorithm
-plot(gs(learning.test))
+library(Rgraphviz)
 
-# correct graph
 data(learning.test)
-res = empty.graph(names(learning.test))
-modelstring(res) = "[A][C][F][B|A][D|A:C][E|B:F]"
-plot(res)
 
-# coronary dataset
-head(coronary)
-res <- gs(coronary)
-plot(res)
 
-# partial ordering 
-data(learning.test)
-res = gs(learning.test, optimized = TRUE)
-plot(res)
-ntests(res)
+res = gs(learning.test)
+res1 = set.arc(gs(learning.test), "A", "B")
+res2 = set.arc(gs(learning.test), "B", "A")
+
+
+score(res1, learning.test, type = "loglik")
+score(res2, learning.test, type = "loglik")
+score(res1, learning.test, type = "bic")
+score(res2, learning.test, type = "bic")
+score(res1, learning.test, type = "aic")
+score(res2, learning.test, type = "aic")
+
+score(res1, learning.test, type = "k2")
+
+
+blacklist = data.frame(from = c("A", "D"), to = c("D", "A"))
+res3 = gs(learning.test, blacklist = blacklist)
+plot(res3)
+
+
+whitelist = data.frame(from = c("E"), to = c("F"))
+res4 = gs(learning.test, whitelist = whitelist)
+plot(res4)
+
+#bn.fit fits the parameters of a Bayesian network given its structure and a data set; 
+#bn.net returns the structure underlying a fitted Bayesian network.
+fitted = bn.fit(res1, learning.test)
+
+# discrete Bayesian network from expert knowledge.
+net = model2network("[A][B][C|A:B]")
+cptA = matrix(c(0.4, 0.6), ncol = 2, dimnames = list(NULL, c("LOW", "HIGH")))
+cptB = matrix(c(0.8, 0.2), ncol = 2, dimnames = list(NULL, c("GOOD", "BAD")))
+cptC = c(0.5, 0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8)
+dim(cptC) = c(2, 2, 2)
+dimnames(cptC) = list("C" = c("TRUE", "FALSE"), "A" =  c("LOW", "HIGH"),
+                      "B" = c("GOOD", "BAD"))
+cfit = custom.fit(net, dist = list(A = cptA, B = cptB, C = cptC))
+
+
+bn.boot(data = learning.test, R = 2, m = 500, algorithm = "gs",
+        statistic = arcs)
+
+res = gs(learning.test)
 res = set.arc(res, "A", "B")
-plot(res)
-ord = node.ordering(res)
-ord
-typeof(ord)
-order <- c("A", "C", "F", "B", "D", "E")
-res <- gs(learning.test, blacklist = ordering2blacklist(order))
-plot(res)
+arc.strength(res, learning.test)
 
-res <- gs(learning.test, blacklist = tiers2blacklist(list(c("A", "C", "F"), c("B", "D", "E"))))
-plot(res)
+arcs = boot.strength(learning.test, algorithm = "hc")
+arcs[(arcs$strength > 0.85) & (arcs$direction >= 0.5)]
+averaged.network(arcs)
 
-# rowMax <- function(df) 
-# {
-#   apply(df, 1, max)
-# }
-# close <- rowMax(data[,c(16:17)])
-# see <- rowMeans(data[,c(18:19)])
-# peer <- data[,20]
-# prev <- rowMeans(data[,c(23:24)])
-# finance <- rowMeans(data[,c(25:28)])
+res5 = hc(learning.test)
+plot(res5)
+fitted = bn.fit(res5, learning.test)
+coefficients(fitted$E)
 
-#######################################################################################
-library(bnlearn)
-library(Rgraphviz)
-data <- read.csv("C:/Users/Sophie/workspace/HurricaneLiliModel/Lili_BN_labels.csv", header=TRUE)
+cv_res <- bn.cv(learning.test, 'hc', loss = "pred", loss.args = list(target = "F"), runs=100)
 
-#data <- d1[,sample(ncol(d1))]
-#cor(data)
-#data <- read.csv("C:/Users/Sophie/workspace/LiliModel/Lili_BN_labels_NotEvac.csv", header=TRUE)
-#data <- read.csv("C:/Users/Sophie/workspace/LiliModel/Lili_BN_labels_EarlyEvac.csv", header=TRUE)
-#data <- read.csv("C:/Users/Sophie/workspace/LiliModel/Lili_BN_labels_LateEvac.csv", header=TRUE)
-#data <- read.csv("C:/Users/Sophie/workspace/LiliModel/Lili_BN_labels_LowIncome.csv", header=TRUE)
-#data <- read.csv("C:/Users/Sophie/workspace/LiliModel/Lili_BN_labels_HighIncome.csv", header=TRUE)
-#data <- read.csv("C:/Users/Sophie/workspace/LiliModel/Lili_BN_labels_VeryLowIncome.csv", header=TRUE)
-#data <- read.csv("C:/Users/Sophie/workspace/LiliModel/Lili_BN_labels_Young.csv", header=TRUE)
-#data <- read.csv("C:/Users/Sophie/workspace/LiliModel/Lili_BN_labels_Old.csv", header=TRUE)
-#hist(data$Edu)
-#hist(data$HouseStruct)
-
-# 1-4
-demo <- c("Age", "Gender", "Race", "Marriage")
-# 5-8
-personal <- c("HouseholdSize", "NumChd", "Edu", "Income")
-# 9-12
-house <- c("Owner", "HouseStruct", "CloseCoast","CloseWater")
-# 13-14
-official <- c("OfficialHurricWatch", "OfficialEvac")
-# 15-19
-info <- c("SrcLocalAuth", "SrcLocalMedia", "SrcNationalMedia", "SrcInternet", "SrcPeers")
-#local_info <- c("SrcLocalAuth", "SrcLocalMedia", "SrcPeers")
-# 20-22
-see <- c("SeeStormCond", "SeeShopClose", "SeePeerEvac")
-# 23-24
-prev <- c("PrevStormExp", "PrevFalseAlarm")
-# 25-29
-concern <- c("ProtectFromLooter", "ProtectFromStorm", "LostIncome", "EvacExpense", "Traffic")
-# 30
-evac <- c("Evac")
-
-X <- data
-#X <- data[, c( 20, 21, 22, 28, 30)]
-
-#X <- data[, c(9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 28, 30)]
-#X <- data[, c( 11, 13, 14, 15, 19, 22, 30)]
-  
-#X <- cbind(close, see, peer, data["OfficialHurricWatch"], data["OfficialEvac"], prev, finance, data["Traffic"], data["Evac"])
-
-#res <- gs(X, alpha=0.01)
-#res <- gs(X, alpha=0.05, blacklist = tiers2blacklist(list(c("CloseCoast","CloseWater", sources, "concern"), evac)))
-#res1 <- gs(X, alpha=0.01, blacklist = tiers2blacklist(list(c(demo, personal, house),  c(see, "EvacExpense", official),"Evac")))
-#res1 <- gs(X, alpha=0.05, blacklist = tiers2blacklist(list(house, c(see, official, local_info, "EvacExpense"), evac)))
-#res1 <- inter.iamb(X, alpha=0.01, blacklist = tiers2blacklist(list(c("CloseCoast", "OfficialHurricWatch", "OfficialEvac", "SrcLocalAuth", "SrcPeers", "SeePeerEvac"), evac)))
-res1 <- iamb(X, alpha=0.01, blacklist = tiers2blacklist(list(c(demo, personal, house),c(prev, official, info, see, concern), evac)))
-#res2 <- hc(X, blacklist = tiers2blacklist(list(reasons, "Evac")))
-#compare(res1, res2)
-#res <- inter.iamb(X)
-#plot(res)
-
-#res1 <- gs(X, alpha=0.01, blacklist = tiers2blacklist(list(c(demo, personal, house),  c(official, see, info, prev, concern),"Evac")))
-graphviz.plot(res1, shape="rectangle")
-
-#######################################################################################
-library(bnlearn)
-library(Rgraphviz)
-data <- read.csv("C:/Users/Sophie/workspace/HurricaneLiliModel/Lili_converted.csv", header=TRUE)
-#cor(data)
-demo <- c('Age', 'Gender', 'r_black', 'r_native', 'r_other')
-personal <- c('m_single', 'm_other', "HouseholdSize", "NumChd", "e_someclg", "e_clg", "Income")
-house <- c('Owner', 'h_mobile', 'h_other', "CloseCoast", "CloseWater")
-official <- c("OfficialHurricWatch", "OfficialEvac")
-info <- c("SrcLocalAuth", "SrcLocalMedia", "SrcNationalMedia", "SrcInternet", "SrcPeers")
-see <- c("SeeStormCond", "SeeShopClose", "SeePeerEvac")
-prev <- c("PrevStormExp", "PrevFalseAlarm")
-concern <- c("ProtectFromLooter", "ProtectFromStorm", "LostIncome", "EvacExpense", "Traffic")
-evac <- c("Evac")
-X <- data
-#res1 <- gs(X, alpha=0.01)
-res1 <- gs(X, alpha=0.01, blacklist = tiers2blacklist(list(demo, c(personal, house),c(prev, official, info, see, concern),evac)))
-graphviz.plot(res1, shape="rectangle")
-
-
-
-
-
-
+cv.bic = bn.cv(alarm, bn = "hc", runs = 10,algorithm.args = list(score = "bic"))

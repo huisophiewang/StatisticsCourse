@@ -1,0 +1,158 @@
+---
+title: "hw5"
+author: "Hui Sophie Wang"
+output: html_document
+---
+
+# 2.1
+## (a)
+The student's conclustion that there is a linear association between Y and X is not warranted.
+Here we have an interval estimation of $\beta_1$, we can only conclude that with confidence coefficient 0.95, we estimate the mean sales of the product (in million dollars) increase by somewhere between 0.452886 and 1.05721 for each million of population in the the firm's 50 marketing districts.
+
+The implied level of significance is 0.05.
+
+## (b)
+I think the population should always be larger than zero, and therefore zero is not in the scope of this model. The negative lower confidence limit for the intercept is ok.
+
+# 2.2
+No. The conclusion of $H_0:\beta_1\le{0}$ means there is negative linear association or there is no association betwen X and Y.
+
+# 2.3
+The two-sided p value for $\beta_1$ is 0.91. It means if null hypothesis is true, the probability that we obtain b1<-0.18 or b1>0.18 is 0.91, which is too high. Therefore, null hypothesis $\beta_1=0$ can't be rejected. 
+
+# 2.7
+## (a)
+```{r}
+X <- c(16, 16, 16, 16, 24, 24, 24, 24, 
+       32, 32, 32, 32, 40, 40, 40, 40)
+Y <- c(199, 205, 196, 200, 218, 220, 215, 223, 
+       237, 234, 235, 230, 250, 248, 253, 246)
+n <- 16
+b1 <- sum((X-mean(X))*(Y-mean(Y)))/sum((X-mean(X))^2)
+b1
+b0 <- mean(Y)-mean(X)*b1
+b0
+Y_hat <- b0+b1*X
+sse <- sum((Y-Y_hat)^2)
+mse <- sse/(n-2)
+var_b1 <- mse/sum((X-mean(X))^2)
+sd_b1 <- sqrt(var_b1)
+sd_b1
+```
+$\frac{b1-\beta_1}{s(b1)}\sim{t_{n-2}}$
+
+$t_{14}^{0.995}=2.977$
+
+99 percent confidence interval of $\beta_1$ is $b1\pm{t_{14}^{0.995}}s(b1)=(1.765285, 2.303465)$
+
+Interpretation: with confidence coefficient 0.99, we estimate the mean hardness increase by somewhere between 1.765285 and 2.303465, when the elapsed time increases by one hour.
+
+## (b)
+$H_0:\beta_1=2$
+
+$H_a:\beta_1\neq{2}$
+
+Decision rule: if p-value > 0.01, we fail to reject $H_0$, otherwise, we accept $H_a$
+
+$T=\frac{b1-2}{s(b1)}=0.38028$
+```{r}
+t <- 0.38028
+2*pt(t, df=14, lower=FALSE)
+
+```
+p-value is 0.709 > $\alpha$
+
+We fail to reject $H_0$, the standard is being satisfied.
+
+## (c)
+${t_{14}^{0.995}}=2.977$, $\delta=0.3/0.1=3$
+
+```{r}
+pt(2.977-3, df=14, lower=FALSE)
+```
+Power of the test is 0.509
+
+# 2.9
+We need the value of a given level $X_h$ to estimate the variance of the mean response $s\{\hat{Y_h}\}$
+
+# 2.10
+## (a)
+A prediction interval for a new observation is appropriate.
+## (b)
+A confidence interval for a mean response is appropriate.
+## (c)
+A confidence interval for a mean response is appropriate.
+
+# 2.11
+Suppose $Y_{h(new)}$ is the mean response at $X=X_h$
+
+Suppose $\bar{Y}_{h(new)}$ is the mean of m new observations at $X=X_h$
+
+They have the same mean, but not the same variance.
+
+$\frac{Y_{h(new)}-\hat{Y}_h}{s(pred)}\sim{t_{n-2}}$, 
+$s^2(pred)=MSE+s^2(\hat{Y}_h)$
+
+$\frac{\bar{Y}_{h(new)}-\hat{Y}_h}{s(predmean)}\sim{t_{n-2}}$, 
+$s^2(predmean)=MSE/m+s^2(\hat{Y}_h)$
+
+
+# 2.16
+## (a)
+
+```{r}
+Xh <- 30
+Yh <- b0+b1*Xh
+Yh
+Yh_var <- mse*(1.0/n + (Xh-mean(X))^2 / sum((X-mean(X))^2) )
+Yh_sd <- sqrt(Yh_var)
+Yh_sd
+```
+$\hat{Y_h}=b0+b1X_h=229.6313$
+
+$\frac{\hat{Y_h}-E\{Y_h\}}{s(\hat{Y_h})}\sim{t_{n-2}}$
+
+${t_{14}^{0.99}}=2.624$
+
+98 percent Confidence Interval of $E\{Y_h\}$ is $\hat{Y_h}\pm{t_{14}^{0.99}}s(\hat{Y_h})=(227.4574, 231.8052)$
+
+## (b)
+```{r}
+pred_var <- Yh_var + mse
+pred_sd <- sqrt(pred_var)
+pred_sd
+```
+
+98 percent prediction interval is $\hat{Y_h}\pm{t_{14}^{0.99}}s(pred)=(220.8714, 238.3913)$
+
+## (c)
+```{r}
+predmean_var <- Yh_var + mse/10
+predmean_sd <- sqrt(predmean_var)
+predmean_sd
+```
+98 percent prediction interval of 10 test items is $\hat{Y_h}\pm{t_{14}^{0.99}}s(predmean)=(226.1717, 233.0849)$
+
+## (d)
+Yes, the prediction interval in (c) is smaller than (b).
+
+It should be. Because the variance of the mean of 10 test items is smaller, the prediction interval is smaller.
+
+## (e)
+```{r}
+ww <- 2*qf(.98, df1=2, df2=14)
+w <- sqrt(ww)
+w
+```
+98 percent confidence band for the regression line is $\hat{Y_h}\pm{W*s(\hat{Y_h})}=(226.9431, 232.3135)$
+
+Yes, the confidence band is wider than the confidence interval in (a).
+
+It should be. Because the confidence band must encompass the entire regression line, while the confidence interval is only for a single level $X_h$.
+
+# 2.17
+
+The analyst concluded $H_a$, which means p-value = 0.033 < $\alpha$, so $\alpha\$ is great than 0.033.
+
+If $\alpha=0.01$, p-value > $\alpha$, we fail to reject the null hypothesis $\beta_1=0$.
+

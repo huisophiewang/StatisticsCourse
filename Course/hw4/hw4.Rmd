@@ -1,0 +1,186 @@
+---
+title: "hw4"
+author: "Hui Sophie Wang"
+output: html_document
+---
+# Problem 1
+## (a)
+Name: Hui "Sophie" Wang (1 person project)
+
+## (b)
+The goal of this project to find out whether there is correlation between people's personality and their behavior and activities. If there is, can we predict people's personality from those behavior and activities? We collected detailed information of subjects' location/position continuously for about two months. We also have the big five personality score of the subjects. 
+
+We have extracted some features from the activity data, and used them in linear regression model. In this project, we want to extract more features, and choose the ones that are not correlated with each other to use in linear regression. Since this problem can also be formed as a classification problem, we can split the personality trait value by median and try logistic regression too. We also want to visualize the data on the campus map in order to get more information from the data.
+
+# Problem 2
+## 1.3
+There might be a mathematical function that describe the process accurately in theory. But in practice, many factors can affect the process, and there can be various measurements errors. Regression analysis can descirbe the general tendency of one variable to vary with another varialbe, as well as the uncertainty in it, so that errors are accounted for. Therefore, it is suitable to use regression analysis here, and the objection is not valid.
+
+## 1.5
+I don't agree.
+
+Simple linear regression model can be stated as:
+$Y_i=\beta_0+\beta_1 X_i+\epsilon_i$
+
+On the other hand, $E\{Y_i\}=E\{\beta_0+\beta_1 X_i+\epsilon_i\}=E\{\beta_0+\beta_1 X_i\}+E\{\epsilon_i\}=\beta_0+\beta_1 X_i$
+
+## 1.16
+No, it doesn't.
+
+For linear regression and least squared method to be fully valid, it doesn't require the distribution of Y to be normal. It is only required that Y has the same constant variance $\sigma^2$ regardless of the value of X, and each Y is uncorrelated to each other, since we assume the error term $\epsilon$ has the same constant variance $\sigma^2$, and uncorrelated to each other.
+
+## 1.18
+No, it isn't true.
+
+$\epsilon$ is the error term of the model, $\epsilon_i=Y_i-(\beta_0+\beta_1 X_i)$, it is the vertical deviation of $Y_i$ from the true regression line, and is unknown.
+
+$e$ is the residual, $e_i=Y_i-(b_0+b_1 X_i)$, it is the vertical deviation of $Y_i$ from our estimated regression line, and is known.
+
+## 1.22
+### (a) 
+```{r}
+X <- c(16, 16, 16, 16, 24, 24, 24, 24, 
+       32, 32, 32, 32, 40, 40, 40, 40)
+Y <- c(199, 205, 196, 200, 218, 220, 215, 223, 
+       237, 234, 235, 230, 250, 248, 253, 246)
+
+b1 <- sum((X-mean(X))*(Y-mean(Y)))/sum((X-mean(X))*(X-mean(X)))
+b1
+b0 <- mean(Y)-mean(X)*b1
+b0
+```
+$Y_i=2.034375 X_i + 168.6 + \epsilon_i$
+
+Yes, linear regression gives a good fit.
+
+### (b) 
+When X=40, point estimate of Y is 249.975
+
+### (c) 
+When X increases by 1 hour, point estimate of the change in mean hardness is 2.034375
+
+
+## 1.26
+### (a)
+
+```{r}
+Y_estimate <- X*b1+b0
+residual <- Y - Y_estimate
+residual
+sum(residual)
+```
+### (b)
+
+```{r}
+sse <- sum((Y-mean(Y))*(Y-mean(Y)))
+mse <- sse/(16-2)
+mse
+```
+$s^2=MSE=SSE/(n-2)=388.8527$
+
+$s=\sqrt{MSE}=19.71$
+
+$\sigma$ is expressed in Brinell unit as Y
+
+# Problem 3
+```{r}
+library(tidyr, quietly = TRUE)
+library(dplyr, quietly = TRUE)
+sestates <- read.csv("http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv", header = TRUE, stringsAsFactors = FALSE)
+head(sestates)
+estates <- tbl_df(sestates)
+```
+
+## (a)
+```{r}
+# replace "sale_date" with "day_week", "month", "day_month"
+estates <- estates %>% 
+  separate(sale_date, c("day_week", "month", "day_month")) 
+  glimpse(estates)
+```
+
+## (b)
+```{r}
+  # the top 10 cities with the most transactions
+estates %>%
+  group_by(city) %>%
+  summarise(n_trans_city = n()) %>%
+  arrange(desc(n_trans_city)) %>%
+  head(10)
+```
+
+## (c)
+```{r}
+# accumulated number of transactions from May 15 to May 21 in city ELK GROVE
+estates %>%
+  select(city, month, day_month) %>%
+  filter(city=="ELK GROVE", month=="May", day_month>=15 & day_month<=21) %>%
+  group_by(month, day_month) %>%
+  summarise(n_trans_day = n()) %>%
+  arrange(day_month) %>%
+  mutate(n_cumtrans_day=cumsum(n_trans_day)) 
+```
+
+## (d)
+```{r}
+# For each type of house, the highest 3 transaction prices
+estates %>%
+  select(type, city, price) %>%
+  group_by(type) %>%
+  arrange(desc(price)) %>%
+  top_n(3)
+```
+
+## (e)
+```{r}
+# For each type of house, the highest 3 transaction prices per sq_ft
+summary(estates$sq__ft)
+estates[estates == 0] <- NA
+summary(estates$sq__ft)
+estates %>%
+  select(type, city, price, sq__ft) %>%
+  mutate(price_sq = price / sq__ft) %>%
+  group_by(type) %>%
+  arrange(desc(price_sq)) %>%
+  top_n(3) %>%
+  select(type, city, price_sq)
+```
+
+## (f)
+```{r}
+# For each type of house in city SACRAMENTO, the number of transactions, average price, and average price per square foot
+
+estates[estates == 0] <- NA
+estates %>%
+  filter(city=="SACRAMENTO") %>%
+  select(type, price, sq__ft) %>%
+  mutate(price_sq = price / sq__ft) %>%
+  group_by(type) %>%
+  summarise(n_trans=n(), avg_price=mean(price), avg_price_sq=mean(price_sq, na.rm=TRUE))
+```
+
+# Problem 4
+
+## (a)
+```{r}
+library(ggplot2, quietly = TRUE)
+p <- ggplot(diamonds, aes(x=carat, y=price)) 
+p
+```
+
+## (b)
+```{r}
+p <- p + geom_point()
+p
+```
+
+## (c)
+```{r}
+p + geom_smooth(method='lm',formula=y~x)
+```
+
+## (d)
+```{r}
+p + facet_grid(cut ~ .) + geom_smooth(method='lm',formula=y~x)
+```
+
