@@ -9,8 +9,9 @@ data <- read.csv("hurricane/Harvey/MTurk_Harvey_bn.csv", header=TRUE)
 data <- lapply(data, as.ordered)
 X <- as.data.frame(data)
 
-demo <- c("age", "is_white", "househd_size", "edu", "income", 
-          "has_children", "has_elders", "has_special_needs", "has_pets")
+demo1 <- c("age", "is_white")
+
+demo2 <- c("househd_size", "edu", "income", "has_children", "has_elders", "has_special_needs", "has_pets")
 
 house <- c("house_mobile", "is_owner", "has_insurance", "coast_dist")
 
@@ -28,7 +29,7 @@ evac_ability <- c("difficulty_family", "difficulty_means")
 
 evac_decision <- c("evac_decision")
 
-blklist <- list(c(demo, house, info_tv, info_social_media, info_other, evac_notice), c(risk, evac_ability), evac_decision)
+blklist <- list(c(demo1), c(demo2, house, info_tv, info_social_media, info_other, evac_notice), c(risk, evac_ability), evac_decision)
 #net <- iamb(X, alpha=0.01, blacklist = tiers2blacklist(blklist))
 #graphviz.plot(net, shape="rectangle")
 
@@ -116,14 +117,14 @@ learned_net <- hc(X, score="bic", blacklist=tiers2blacklist(blklist), start=prio
 graphviz.plot(learned_net, shape="rectangle")
 
 
-learned_net <- gs(X, alpha=0.01, blacklist = tiers2blacklist(blklist), debug=TRUE)
+#learned_net <- gs(X, alpha=0.01, blacklist = tiers2blacklist(blklist), debug=TRUE)
 
 # model averaging
-boot <- boot.strength(X, R = 100, algorithm = "hc", algorithm.args = list(score="bic", blacklist=tiers2blacklist(blklist), start=prior))
+boot <- boot.strength(X, R = 1000, algorithm = "hc", algorithm.args = list(score="bic", blacklist=tiers2blacklist(blklist), start=prior))
 #boot <- boot.strength(X, R = 1000, algorithm = "tabu", algorithm.args = list(score = "bic", blacklist=tiers2blacklist(blklist)))
 #boot <- boot.strength(X, R = 100, algorithm = "gs", algorithm.args = list(alpha = 0.05, blacklist=tiers2blacklist(blklist)))
-
-boot[(boot$strength > 0.7) & (boot$direction >= 0.01), ]
-avg.boot <- averaged.network(boot, threshold=0.7)
+cutoff <- 0.5
+boot[(boot$strength > cutoff) & (boot$direction >= 0.5), ]
+avg.boot <- averaged.network(boot, threshold=cutoff)
 graphviz.plot(avg.boot, shape="rectangle")
 
