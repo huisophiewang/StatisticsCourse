@@ -34,7 +34,7 @@ blklist <- list(c("Race_Pets","Finance","Elders_SpecialNeeds","Children",
                 c("Risk"),
                 c("Evac"))
 
-res <- mmpc(X, alpha=0.05, blacklist = tiers2blacklist(blklist))
+res <- inter.iamb(X, alpha=0.05, blacklist = tiers2blacklist(blklist))
 #res <- inter.iamb(X, alpha=0.05, blacklist = tiers2blacklist(blklist))
 #res <- si.hiton.pc(X, alpha=0.05, blacklist = tiers2blacklist(blklist))
 graphviz.plot(res, shape="rectangle")

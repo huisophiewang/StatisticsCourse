@@ -104,7 +104,7 @@ X <- rename(data, c("cluster1"="House_Finance", "cluster2"="Elders_SpecialNeeds"
                     "cluster5"="HouseMaterial", "cluster6"="EvacNotice_Friends_Neighbors",
                     "cluster7"="TVRadio","cluster8"="SocialMedia", "cluster9"="Risk", "evac_decision"="Evac"))
 
-X <- discretize(X[,1:9], method='interval', breaks=3, ordered=TRUE)
+X <- discretize(X[,1:9], method='interval', breaks=7, ordered=TRUE)
 X$Evac = data$evac_decision
 X$Evac <- as.ordered(X$Evac)
 blklist <- list(c("House_Finance","Elders_SpecialNeeds","Children","Race_Pets","HouseMaterial",

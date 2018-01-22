@@ -56,3 +56,9 @@ write.csv(p9$scores, 'hurricane/Harvey/harvey_9clusters.csv')
 # cluster7: tv
 # cluster8: social media
 # cluster9: risk
+
+# test variance
+# the percentage of total variance explained by the first component
+princomp
+vars <- lapply(data, var)
+
