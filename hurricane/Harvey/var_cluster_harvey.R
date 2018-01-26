@@ -1,11 +1,12 @@
 library("ClustOfVar")
 
+
 data <- read.csv("hurricane/Harvey/MTurk_Harvey_var_cluster_v2.csv", header=TRUE)
-#data <- lapply(data, as.numeric)
-X <- as.data.frame(data)
-#X.quali <- X[,1]
-#X.quanti <- X[,2:56]
-#tree <- hclustvar(X.quanti, X.quali)
+col_names <- names(data)
+dnorm <- apply(data, 2, scale)
+apply(dnorm, 2, mean)
+apply(dnorm, 2, sd)
+X <- as.data.frame(dnorm, col.names=col_names)
 
 tree <- hclustvar(X)
 plot(tree)
@@ -58,7 +59,19 @@ write.csv(p9$scores, 'hurricane/Harvey/harvey_9clusters.csv')
 # cluster9: risk
 
 # test variance
+# normalize first
 # the percentage of total variance explained by the first component
-princomp
-vars <- lapply(data, var)
+#princomp
+
+
+#X <- as.data.frame(data)
+#colMeans(data)
+#vars <- lapply(data, var)
+
+
+
+
+
+
+
 
